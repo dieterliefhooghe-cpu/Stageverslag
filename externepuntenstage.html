@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stage Externe Punten</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #c84b31;
+    --gold: #d4a017;
+    --green: #2d6a4f;
+    --blue: #1d4e89;
+    --muted: #7a7060;
+    --border: #ccc4b0;
+    --shadow: rgba(26,26,46,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem 2.5rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(255,255,255,0.015) 20px,
+      rgba(255,255,255,0.015) 40px
+    );
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    letter-spacing: -0.5px;
+    position: relative;
+  }
+  header .subtitle {
+    font-size: 0.85rem;
+    color: rgba(245,240,232,0.55);
+    margin-top: 0.3rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .accent-line {
+    width: 48px; height: 3px;
+    background: var(--accent);
+    margin: 0.75rem 0;
+    position: relative;
+  }
+
+  /* ===== LAYOUT ===== */
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ===== SETUP CARD ===== */
+  .setup-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .setup-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .setup-card h2::before {
+    content: '01';
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(200,75,49,0.1);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .field label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--blue);
+    background: white;
+  }
+
+  /* ===== TABS ===== */
+  .week-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 2px solid var(--border);
+  }
+  .week-tab {
+    padding: 0.65rem 1.4rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: transparent;
+    transition: all 0.15s;
+    position: relative;
+    bottom: -2px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .week-tab:hover { color: var(--ink); background: var(--cream); }
+  .week-tab.active {
+    color: var(--ink);
+    background: white;
+    border-color: var(--border);
+    border-bottom-color: white;
+    font-weight: 600;
+  }
+  .week-tab.hidden { display: none; }
+
+  /* ===== EVAL CARD ===== */
+  .eval-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 4px 4px 4px;
+    padding: 1.8rem 2rem;
+    box-shadow: 0 2px 12px var(--shadow);
+    margin-bottom: 1.5rem;
+  }
+  .eval-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--cream);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-badge {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .badge-att { background: rgba(29,78,137,0.1); color: var(--blue); }
+  .badge-kv  { background: rgba(45,106,79,0.1); color: var(--green); }
+
+  /* ===== CRITERIA ROWS ===== */
+  .criteria-table { width: 100%; border-collapse: collapse; }
+  .criteria-table thead th {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.3rem 0.5rem 0.6rem;
+    text-align: center;
+    border-bottom: 1px solid var(--cream);
+  }
+  .criteria-table thead th:first-child { text-align: left; width: 55%; }
+  .criteria-table tbody tr {
+    border-bottom: 1px solid var(--cream);
+    transition: background 0.1s;
+  }
+  .criteria-table tbody tr:hover { background: rgba(245,240,232,0.5); }
+  .criteria-table tbody tr:last-child { border-bottom: none; }
+  .criteria-table td {
+    padding: 0.55rem 0.5rem;
+    font-size: 0.88rem;
+    vertical-align: middle;
+  }
+  .criteria-table td:first-child { color: var(--ink); }
+
+  /* ===== SCORE BUTTONS ===== */
+  .score-group {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+  }
+  .score-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .score-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .score-btn.s1.active { background: #e74c3c; border-color: #e74c3c; color: white; }
+  .score-btn.s2.active { background: #e67e22; border-color: #e67e22; color: white; }
+  .score-btn.s3.active { background: #27ae60; border-color: #27ae60; color: white; }
+  .score-btn.s4.active { background: #2980b9; border-color: #2980b9; color: white; }
+
+  .score-val {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 28px;
+    text-align: center;
+  }
+
+  /* ===== LEERKRACHT SECTION ===== */
+  .teacher-section {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .teacher-section h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+  .teacher-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+  }
+  .teacher-row label {
+    font-size: 0.82rem;
+    color: var(--ink);
+    flex: 1;
+  }
+  .teacher-row .pct {
+    font-size: 0.72rem;
+    color: var(--muted);
+    width: 36px;
+    text-align: right;
+  }
+  .teacher-row input[type=number] {
+    width: 80px;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink);
+    background: white;
+    text-align: center;
+    outline: none;
+  }
+  .teacher-row input[type=number]:focus { border-color: var(--blue); }
+
+  /* ===== LEGEND ===== */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cream);
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  /* ===== RESULTS ===== */
+  .results-card {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+  .results-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .result-box {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .result-box .rb-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 0.4rem;
+  }
+  .result-box .rb-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .result-box .rb-max {
+    font-size: 0.72rem;
+    color: rgba(245,240,232,0.35);
+    margin-top: 0.2rem;
+  }
+
+  .totaal-box {
+    background: var(--accent);
+    border-color: transparent;
+  }
+  .totaal-box .rb-label { color: rgba(245,240,232,0.7); }
+  .totaal-box .rb-value { color: white; font-size: 2.4rem; }
+  .totaal-box .rb-max { color: rgba(245,240,232,0.55); }
+
+  /* per-week results */
+  .week-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+  .week-result-col {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 0.9rem 1rem;
+  }
+  .week-result-col h4 {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 0.6rem;
+  }
+  .week-result-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.82rem;
+    color: rgba(245,240,232,0.7);
+    padding: 0.2rem 0;
+  }
+  .week-result-row span:last-child {
+    font-weight: 600;
+    color: var(--paper);
+  }
+
+  /* ===== PRINT / EXPORT ===== */
+  .actions {
+    display: flex; gap: 0.75rem; flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .btn {
+    padding: 0.65rem 1.4rem;
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover { background: #0f0f1e; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--ink); }
+
+  /* ===== PRINT ===== */
+  #printOverlay { display: none; }
+
+  @media print {
+    @page { size: A4 portrait; margin: 12mm 14mm; }
+
+    body > * { display: none !important; }
+    #printOverlay { display: block !important; }
+
+    .po-page {
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a2e;
+      font-size: 8.5pt;
+      line-height: 1.35;
+    }
+
+    /* Header */
+    .po-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2.5pt solid #1a1a2e;
+      padding-bottom: 5mm;
+      margin-bottom: 4mm;
+    }
+    .po-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 17pt;
+      color: #1a1a2e;
+      line-height: 1.1;
+    }
+    .po-subtitle {
+      font-size: 7.5pt;
+      color: #7a7060;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 1.5mm;
+    }
+    .po-header-right {
+      border: 1pt solid #ccc4b0;
+      border-radius: 2pt;
+      padding: 2.5mm 3mm;
+      min-width: 55mm;
+      background: #f5f0e8;
+    }
+    .po-meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 4mm;
+      font-size: 7.5pt;
+      padding: 0.5mm 0;
+      border-bottom: 0.5pt solid #e0d8cc;
+    }
+    .po-meta-row:last-child { border-bottom: none; }
+    .po-meta-row span { color: #7a7060; }
+    .po-meta-row strong { color: #1a1a2e; }
+
+    /* Legend */
+    .po-legend {
+      display: flex;
+      gap: 6mm;
+      background: #ede8dc;
+      border: 0.5pt solid #ccc4b0;
+      padding: 1.5mm 3mm;
+      border-radius: 2pt;
+      margin-bottom: 3.5mm;
+      font-size: 7pt;
+      color: #7a7060;
+    }
+    .po-legend strong { color: #1a1a2e; }
+
+    /* Week block */
+    .po-week { margin-bottom: 4mm; break-inside: avoid; }
+    .po-week-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 10pt;
+      background: #1a1a2e;
+      color: #f5f0e8;
+      padding: 1.5mm 3mm;
+      border-radius: 2pt 2pt 0 0;
+    }
+    .po-week-body { border: 0.5pt solid #ccc4b0; border-top: none; border-radius: 0 0 2pt 2pt; }
+
+    /* Section inside week */
+    .po-section-header {
+      background: #ede8dc;
+      font-size: 7.5pt;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 1.2mm 3mm;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 0.5pt solid #ccc4b0;
+    }
+    .po-section-header span { color: #7a7060; font-weight: 400; }
+
+    .po-criteria-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .po-criteria-table td {
+      padding: 1mm 2.5mm;
+      font-size: 7.5pt;
+      border-bottom: 0.4pt solid #ede8dc;
+      vertical-align: middle;
+    }
+    .po-criteria-table tr:last-child td { border-bottom: none; }
+    .po-criteria-table .td-name { width: 60%; }
+    .po-criteria-table .td-score {
+      text-align: center;
+      width: 10%;
+    }
+    .po-score-circle {
+      display: inline-block;
+      width: 5mm; height: 5mm;
+      border-radius: 50%;
+      line-height: 5mm;
+      text-align: center;
+      font-size: 7pt;
+      font-weight: 700;
+    }
+    .score-empty { border: 0.8pt solid #ccc4b0; color: #ccc4b0; }
+    .score-1 { background: #e74c3c; color: white; }
+    .score-2 { background: #e67e22; color: white; }
+    .score-3 { background: #27ae60; color: white; }
+    .score-4 { background: #2980b9; color: white; }
+
+    .po-subtotal-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 3mm;
+      padding: 1.5mm 3mm;
+      background: #f5f0e8;
+      font-size: 7.5pt;
+      border-top: 0.5pt solid #ccc4b0;
+    }
+    .po-subtotal-row .po-sub-label { color: #7a7060; }
+    .po-subtotal-row .po-sub-val { font-weight: 700; color: #1a1a2e; }
+
+    /* Teacher section */
+    .po-teacher {
+      border: 0.5pt solid #ccc4b0;
+      border-radius: 2pt;
+      margin-bottom: 4mm;
+      break-inside: avoid;
+    }
+    .po-section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 9pt;
+      background: #1a1a2e;
+      color: #f5f0e8;
+      padding: 1.5mm 3mm;
+      border-radius: 2pt 2pt 0 0;
+    }
+    .po-mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      padding: 2mm;
+    }
+    .po-mini-table td { padding: 1.5mm 3mm; font-size: 7.5pt; }
+    .po-mini-table tr:first-child td { border-bottom: 0.4pt solid #ede8dc; }
+    .po-pct { color: #7a7060; text-align: center; width: 12mm; }
+    .po-score-cell { text-align: center; width: 18mm; }
+    .po-arrow { color: #7a7060; text-align: center; width: 6mm; }
+    .po-weighted { text-align: right; font-size: 8pt; }
+
+    /* Totals */
+    .po-totals {
+      border: 0.5pt solid #ccc4b0;
+      border-radius: 2pt;
+      margin-bottom: 5mm;
+      break-inside: avoid;
+    }
+    .po-totals .po-section-title { border-radius: 2pt 2pt 0 0; }
+    .po-totals-grid {
+      display: flex;
+      gap: 0;
+    }
+    .po-total-box {
+      flex: 1;
+      text-align: center;
+      padding: 2.5mm 2mm;
+      border-right: 0.5pt solid #ccc4b0;
+      font-size: 7pt;
+    }
+    .po-total-box:last-child { border-right: none; }
+    .po-total-box .tb-label { color: #7a7060; margin-bottom: 1mm; text-transform: uppercase; letter-spacing: 0.04em; font-size: 6.5pt; }
+    .po-total-box .tb-val { font-family: 'DM Serif Display', serif; font-size: 14pt; color: #1a1a2e; }
+    .po-total-box .tb-max { color: #7a7060; font-size: 6.5pt; }
+    .po-total-box.tb-final { background: #1a1a2e; }
+    .po-total-box.tb-final .tb-label { color: rgba(245,240,232,0.6); }
+    .po-total-box.tb-final .tb-val { color: #d4a017; }
+    .po-total-box.tb-final .tb-max { color: rgba(245,240,232,0.45); }
+
+    /* Footer signatures */
+    .po-footer {
+      display: flex;
+      gap: 8mm;
+      margin-top: 6mm;
+      padding-top: 4mm;
+      border-top: 0.5pt solid #ccc4b0;
+    }
+    .po-sign { flex: 1; }
+    .po-sign-line { border-bottom: 0.8pt solid #1a1a2e; margin-bottom: 1.5mm; height: 8mm; }
+    .po-sign-label { font-size: 7pt; color: #7a7060; }
+  }
+
+  .week-panel { display: none; }
+  .week-panel.active { display: block; }
+
+  /* progress bar */
+  .progress-bar-wrap {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Stage Externe Punten</h1>
+  <div class="accent-line"></div>
+  <div class="subtitle">Evaluatieformulier stagebeoordeling</div>
+</header>
+
+<div class="container">
+
+  <!-- SETUP -->
+  <div class="setup-card">
+    <h2>Leerlinggegevens</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label>Naam leerling</label>
+        <input type="text" id="naam" placeholder="Voornaam Achternaam" oninput="updateHeader()">
+      </div>
+      <div class="field">
+        <label>Klas</label>
+        <input type="text" id="klas" placeholder="bv. 3TBO" oninput="updateHeader()">
+      </div>
+      <div class="field">
+        <label>Klasnummer</label>
+        <input type="text" id="klasnr" placeholder="bv. 12" oninput="updateHeader()">
+      </div>
+      <div class="field">
+        <label>Aantal weken</label>
+        <select id="aantalWeken" onchange="updateWeeks()">
+          <option value="1">1 week</option>
+          <option value="2">2 weken</option>
+          <option value="3" selected>3 weken</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Stagegever / Bedrijf</label>
+        <input type="text" id="bedrijf" placeholder="Naam bedrijf">
+      </div>
+      <div class="field">
+        <label>Datum evaluatie</label>
+        <input type="date" id="datum">
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK TABS -->
+  <div class="week-tabs" id="weekTabs">
+    <button class="week-tab active" onclick="showWeek(1)">Week 1</button>
+    <button class="week-tab" onclick="showWeek(2)">Week 2</button>
+    <button class="week-tab" onclick="showWeek(3)">Week 3</button>
+  </div>
+
+  <!-- WEEK PANELS -->
+  <div id="weekPanels">
+  </div>
+
+  <!-- BEOORDELING LEERKRACHT (éénmalig) -->
+  <div class="setup-card" style="margin-top:1.5rem;">
+    <h2 style="font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;color:var(--accent);background:rgba(200,75,49,0.1);padding:2px 6px;border-radius:2px;">02</span>
+      Beoordeling leerkracht <span style="font-size:0.78rem;font-weight:400;color:var(--muted);margin-left:0.5rem;">— geldt voor de volledige stageperiode</span>
+    </h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:480px;">
+      <div class="field">
+        <label>Verslag leerkracht <span style="font-weight:400;color:var(--muted);">(20%)</span></label>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="number" id="verslag" min="0" max="100" placeholder="0–100" oninput="updateCalc()" style="width:100%;padding:0.6rem 0.8rem;border:1px solid var(--border);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--ink);background:var(--paper);outline:none;">
+          <span style="font-size:0.8rem;color:var(--muted);white-space:nowrap;">/ 100</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Dossier leerkracht <span style="font-weight:400;color:var(--muted);">(10%)</span></label>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="number" id="dossier" min="0" max="100" placeholder="0–100" oninput="updateCalc()" style="width:100%;padding:0.6rem 0.8rem;border:1px solid var(--border);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--ink);background:var(--paper);outline:none;">
+          <span style="font-size:0.8rem;color:var(--muted);white-space:nowrap;">/ 100</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOTAAL RESULTATEN -->
+  <div class="results-card" id="resultsCard">
+    <h2>📊 Totaalresultaten</h2>
+    <div class="results-grid" id="resultsGrid">
+      <!-- filled dynamically -->
+    </div>
+    <div id="weekResultsDetail"></div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn btn-primary" onclick="printPDF()">🖨 Afdrukken als PDF</button>
+    <button class="btn btn-secondary" onclick="resetAll()">↺ Leegmaken</button>
+    <button class="btn btn-secondary" onclick="exportJSON()">⬇ Opslaan (JSON)</button>
+    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">⬆ Laden</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+  </div>
+
+</div>
+
+<!-- A4 PRINT OVERLAY -->
+<div id="printOverlay" style="display:none;">
+  <div class="po-page">
+
+    <div class="po-header">
+      <div class="po-header-left">
+        <div class="po-title">Stage Externe Evaluatie</div>
+        <div class="po-subtitle">Evaluatieformulier stagebeoordeling</div>
+      </div>
+      <div class="po-header-right">
+        <div class="po-meta-row"><span>Leerling</span><strong id="po-naam">—</strong></div>
+        <div class="po-meta-row"><span>Klas</span><strong id="po-klas">—</strong></div>
+        <div class="po-meta-row"><span>Nr.</span><strong id="po-klasnr">—</strong></div>
+        <div class="po-meta-row"><span>Bedrijf</span><strong id="po-bedrijf">—</strong></div>
+        <div class="po-meta-row"><span>Datum</span><strong id="po-datum">—</strong></div>
+      </div>
+    </div>
+
+    <div class="po-legend">
+      <span><strong>1</strong> Onvoldoende</span>
+      <span><strong>2</strong> Voldoende</span>
+      <span><strong>3</strong> Goed</span>
+      <span><strong>4</strong> Zeer goed</span>
+    </div>
+
+    <div id="po-weeks"></div>
+
+    <div class="po-teacher">
+      <div class="po-section-title">Beoordeling Leerkracht <span style="font-weight:400;font-size:0.75rem;">(geldt voor volledige stageperiode)</span></div>
+      <table class="po-mini-table">
+        <tr>
+          <td>Verslag leerkracht</td>
+          <td class="po-pct">20%</td>
+          <td class="po-score-cell"><span id="po-verslag-raw">—</span> / 100</td>
+          <td class="po-arrow">→</td>
+          <td class="po-weighted"><strong id="po-verslag-wgt">—</strong> / 20</td>
+        </tr>
+        <tr>
+          <td>Dossier leerkracht</td>
+          <td class="po-pct">10%</td>
+          <td class="po-score-cell"><span id="po-dossier-raw">—</span> / 100</td>
+          <td class="po-arrow">→</td>
+          <td class="po-weighted"><strong id="po-dossier-wgt">—</strong> / 10</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="po-totals">
+      <div class="po-section-title">Eindresultaat</div>
+      <div class="po-totals-grid" id="po-totals-grid"></div>
+    </div>
+
+    <div class="po-footer">
+      <div class="po-sign"><div class="po-sign-line"></div><div class="po-sign-label">Handtekening stagegever</div></div>
+      <div class="po-sign"><div class="po-sign-line"></div><div class="po-sign-label">Handtekening leerling</div></div>
+      <div class="po-sign"><div class="po-sign-line"></div><div class="po-sign-label">Handtekening leerkracht</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const ATTITUDES = [
+  'Zorg voor middelen en milieu',
+  'Zorg voor veiligheid',
+  'Uiterlijke verzorging en hygiëne',
+  'Sociale houding en samenwerking',
+  'Arbeidsritme',
+  'Leergierigheid en interesse',
+  'Kwaliteitszorg',
+  'Zin voor initiatief',
+  'Flexibiliteit',
+  'Discipline en stiptheid',
+  'Contact leggen, communiceren en afspraken maken'
+];
+
+const KENNIS = [
+  'Werkmethode',
+  'Basiskennis voor het uitvoeren van de werkzaamheden',
+  'Kwaliteit van het geleverde werk',
+  'Correct gebruik van gereedschappen en machines',
+  'Correct gebruik van materialen en afvalverwerking',
+  'Correct gebruik van veiligheidsvoorschriften',
+  'Zelfstandig taken kunnen uitvoeren'
+];
+
+// state[week][type][criteriumIndex] = score (1-4)
+let state = {};
+
+// init
+function initState() {
+  for (let w = 1; w <= 3; w++) {
+    state[w] = {
+      att: new Array(ATTITUDES.length).fill(0),
+      kv: new Array(KENNIS.length).fill(0),
+      verslag: '',
+      dossier: ''
+    };
+  }
+}
+initState();
+
+function buildWeekPanel(w) {
+  const attRows = ATTITUDES.map((name, i) => `
+    <tr>
+      <td>${name}</td>
+      <td>
+        <div class="score-group">
+          ${[1,2,3,4].map(s => `<button class="score-btn s${s}" id="w${w}_att_${i}_${s}" onclick="setScore(${w},'att',${i},${s})">${s}</button>`).join('')}
+        </div>
+      </td>
+      <td class="score-val" id="w${w}_att_${i}_val">—</td>
+    </tr>`).join('');
+
+  const kvRows = KENNIS.map((name, i) => `
+    <tr>
+      <td>${name}</td>
+      <td>
+        <div class="score-group">
+          ${[1,2,3,4].map(s => `<button class="score-btn s${s}" id="w${w}_kv_${i}_${s}" onclick="setScore(${w},'kv',${i},${s})">${s}</button>`).join('')}
+        </div>
+      </td>
+      <td class="score-val" id="w${w}_kv_${i}_val">—</td>
+    </tr>`).join('');
+
+  return `
+  <div class="week-panel${w === 1 ? ' active' : ''}" id="panel_week${w}">
+    <div class="eval-card">
+
+      <div class="eval-section-title">
+        <span class="section-badge badge-att">Attitudes</span>
+        Attitudes & Gedrag
+        <span style="margin-left:auto;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--muted);">max 44 pt · weergegeven op /55</span>
+      </div>
+
+      <table class="criteria-table">
+        <thead>
+          <tr>
+            <th>Criterium</th>
+            <th>Score (1–4)</th>
+            <th>Pt</th>
+          </tr>
+        </thead>
+        <tbody>${attRows}</tbody>
+      </table>
+
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--cream);display:flex;justify-content:flex-end;align-items:center;gap:1rem;">
+        <span style="font-size:0.78rem;color:var(--muted);">Subtotaal attitudes</span>
+        <span style="font-size:1.1rem;font-weight:700;color:var(--blue);" id="w${w}_att_sub">0 / 44</span>
+        <span style="font-size:0.82rem;color:var(--muted);">→</span>
+        <span style="font-size:1.1rem;font-weight:700;color:var(--blue);" id="w${w}_att_wgt">0.00 / 55</span>
+      </div>
+
+      <div class="eval-section-title" style="margin-top:1.5rem;">
+        <span class="section-badge badge-kv">Kennis & Vaard.</span>
+        Kennis en Vaardigheden
+        <span style="margin-left:auto;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--muted);">max 28 pt · weergegeven op /35</span>
+      </div>
+
+      <table class="criteria-table">
+        <thead>
+          <tr>
+            <th>Criterium</th>
+            <th>Score (1–4)</th>
+            <th>Pt</th>
+          </tr>
+        </thead>
+        <tbody>${kvRows}</tbody>
+      </table>
+
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px dashed var(--cream);display:flex;justify-content:flex-end;align-items:center;gap:1rem;">
+        <span style="font-size:0.78rem;color:var(--muted);">Subtotaal kennis & vaard.</span>
+        <span style="font-size:1.1rem;font-weight:700;color:var(--green);" id="w${w}_kv_sub">0 / 28</span>
+        <span style="font-size:0.82rem;color:var(--muted);">→</span>
+        <span style="font-size:1.1rem;font-weight:700;color:var(--green);" id="w${w}_kv_wgt">0.00 / 35</span>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> 1 = Onvoldoende</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div> 2 = Voldoende</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div> 3 = Goed</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2980b9"></div> 4 = Zeer goed</div>
+      </div>
+
+    </div>
+  </div>`;
+}
+
+// render all 3 panels
+document.getElementById('weekPanels').innerHTML =
+  buildWeekPanel(1) + buildWeekPanel(2) + buildWeekPanel(3);
+
+// set today's date
+document.getElementById('datum').valueAsDate = new Date();
+
+function showWeek(w) {
+  document.querySelectorAll('.week-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel_week' + w).classList.add('active');
+  document.querySelectorAll('.week-tab')[w-1].classList.add('active');
+}
+
+function updateWeeks() {
+  const n = parseInt(document.getElementById('aantalWeken').value);
+  document.querySelectorAll('.week-tab').forEach((t, i) => {
+    t.classList.toggle('hidden', i >= n);
+  });
+  // if current active tab hidden, go to week 1
+  if (document.querySelectorAll('.week-tab')[n-1] && !document.querySelectorAll('.week-tab.active')[0]) showWeek(1);
+  updateCalc();
+}
+updateWeeks();
+
+function setScore(week, type, idx, score) {
+  if (state[week][type][idx] === score) {
+    state[week][type][idx] = 0;
+  } else {
+    state[week][type][idx] = score;
+  }
+  // update buttons
+  for (let s = 1; s <= 4; s++) {
+    const btn = document.getElementById(`w${week}_${type}_${idx}_${s}`);
+    btn.classList.toggle('active', state[week][type][idx] === s);
+  }
+  // update val cell
+  const val = state[week][type][idx];
+  document.getElementById(`w${week}_${type}_${idx}_val`).textContent = val || '—';
+  updateCalc();
+}
+
+function printPDF() {
+  const n = parseInt(document.getElementById('aantalWeken').value);
+
+  // Fill meta
+  document.getElementById('po-naam').textContent    = document.getElementById('naam').value    || '—';
+  document.getElementById('po-klas').textContent    = document.getElementById('klas').value    || '—';
+  document.getElementById('po-klasnr').textContent  = document.getElementById('klasnr').value  || '—';
+  document.getElementById('po-bedrijf').textContent = document.getElementById('bedrijf').value || '—';
+  const d = document.getElementById('datum').value;
+  document.getElementById('po-datum').textContent   = d ? new Date(d).toLocaleDateString('nl-BE') : '—';
+
+  // Teacher
+  const verslag = parseFloat(document.getElementById('verslag').value) || 0;
+  const dossier = parseFloat(document.getElementById('dossier').value) || 0;
+  document.getElementById('po-verslag-raw').textContent = verslag;
+  document.getElementById('po-dossier-raw').textContent = dossier;
+  document.getElementById('po-verslag-wgt').textContent = (verslag * 0.2).toFixed(1);
+  document.getElementById('po-dossier-wgt').textContent = (dossier * 0.1).toFixed(1);
+
+  // Week blocks
+  let totalAttSum = 0, totalKvSum = 0;
+  let weeksHtml = '';
+  for (let w = 1; w <= n; w++) {
+    const attSum = state[w].att.reduce((a,b) => a+b, 0);
+    const kvSum  = state[w].kv.reduce((a,b) => a+b, 0);
+    totalAttSum += attSum; totalKvSum += kvSum;
+
+    const attRows = ATTITUDES.map((name, i) => {
+      const s = state[w].att[i];
+      return `<tr>
+        <td class="td-name">${name}</td>
+        ${[1,2,3,4].map(v => `<td class="td-score"><span class="po-score-circle ${s===v?'score-'+v:'score-empty'}">${v}</span></td>`).join('')}
+      </tr>`;
+    }).join('');
+
+    const kvRows = KENNIS.map((name, i) => {
+      const s = state[w].kv[i];
+      return `<tr>
+        <td class="td-name">${name}</td>
+        ${[1,2,3,4].map(v => `<td class="td-score"><span class="po-score-circle ${s===v?'score-'+v:'score-empty'}">${v}</span></td>`).join('')}
+      </tr>`;
+    }).join('');
+
+    weeksHtml += `
+    <div class="po-week">
+      <div class="po-week-title">Week ${w}</div>
+      <div class="po-week-body">
+        <div class="po-section-header">Attitudes &amp; Gedrag <span>max 44 · weergegeven op /55</span></div>
+        <table class="po-criteria-table">
+          <thead><tr><td class="td-name"></td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">1</td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">2</td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">3</td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">4</td></tr></thead>
+          <tbody>${attRows}</tbody>
+        </table>
+        <div class="po-subtotal-row">
+          <span class="po-sub-label">Subtotaal attitudes</span>
+          <span class="po-sub-val">${attSum} / 55</span>
+        </div>
+        <div class="po-section-header" style="border-top:0.5pt solid #ccc4b0;">Kennis en Vaardigheden <span>max 28 · weergegeven op /35</span></div>
+        <table class="po-criteria-table">
+          <thead><tr><td class="td-name"></td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">1</td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">2</td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">3</td><td class="td-score" style="text-align:center;font-size:6.5pt;color:#7a7060;">4</td></tr></thead>
+          <tbody>${kvRows}</tbody>
+        </table>
+        <div class="po-subtotal-row">
+          <span class="po-sub-label">Subtotaal kennis &amp; vaardigheden</span>
+          <span class="po-sub-val">${kvSum} / 35</span>
+        </div>
+        <div class="po-subtotal-row" style="background:#1a1a2e;color:#f5f0e8;border-radius:0 0 2pt 2pt;">
+          <span style="color:rgba(245,240,232,0.6);">Week ${w} subtotaal</span>
+          <span style="font-weight:700;color:#d4a017;">${attSum + kvSum} / 90</span>
+        </div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('po-weeks').innerHTML = weeksHtml;
+
+  // Totals grid
+  const gemAtt = (totalAttSum / n).toFixed(1);
+  const gemKv  = (totalKvSum / n).toFixed(1);
+  const gemStageRaw = (totalAttSum + totalKvSum) / n;
+  const stagePct = gemStageRaw / 90;
+  const stageAandeel  = (stagePct * 70).toFixed(1);
+  const verslagAandeel = (verslag / 100 * 20).toFixed(1);
+  const dossierAandeel = (dossier / 100 * 10).toFixed(1);
+  const eindPct = (parseFloat(stageAandeel) + parseFloat(verslagAandeel) + parseFloat(dossierAandeel)).toFixed(1);
+
+  document.getElementById('po-totals-grid').innerHTML = `
+    <div class="po-total-box"><div class="tb-label">Gem. Attitudes (70%)</div><div class="tb-val">${gemAtt}</div><div class="tb-max">/ 55 (max 44)</div></div>
+    <div class="po-total-box"><div class="tb-label">Gem. K&amp;V (70%)</div><div class="tb-val">${gemKv}</div><div class="tb-max">/ 35 (max 28)</div></div>
+    <div class="po-total-box"><div class="tb-label">Stage aandeel</div><div class="tb-val">${stageAandeel}</div><div class="tb-max">/ 70</div></div>
+    <div class="po-total-box"><div class="tb-label">Verslag (20%)</div><div class="tb-val">${verslagAandeel}</div><div class="tb-max">/ 20</div></div>
+    <div class="po-total-box"><div class="tb-label">Dossier (10%)</div><div class="tb-val">${dossierAandeel}</div><div class="tb-max">/ 10</div></div>
+    <div class="po-total-box tb-final"><div class="tb-label">Eindtotaal</div><div class="tb-val">${eindPct}%</div><div class="tb-max">op 100</div></div>
+  `;
+
+  document.getElementById('printOverlay').style.display = 'block';
+  window.print();
+  document.getElementById('printOverlay').style.display = 'none';
+}
+
+function updateCalc() {
+  const n = parseInt(document.getElementById('aantalWeken').value);
+  let totalAll = 0, maxAll = 0;
+  const weekData = [];
+
+  // Global leerkracht scores (eenmalig voor hele periode)
+  const verslag = parseFloat(document.getElementById('verslag').value) || 0;
+  const dossier = parseFloat(document.getElementById('dossier').value) || 0;
+  const verslagWgt = verslag * 0.2;
+  const dossierWgt = dossier * 0.1;
+
+  for (let w = 1; w <= n; w++) {
+    const attSum = state[w].att.reduce((a,b) => a+b, 0);
+    const attMax = ATTITUDES.length * 4; // 44
+    const kvSum = state[w].kv.reduce((a,b) => a+b, 0);
+    const kvMax = KENNIS.length * 4; // 28
+
+    const weekTotal = attSum + kvSum;
+    const weekMax = 55 + 35; // 90 per week
+
+    totalAll += weekTotal;
+    maxAll += weekMax;
+
+    // update sub totals
+    document.getElementById(`w${w}_att_sub`).textContent = `${attSum} / ${attMax}`;
+    document.getElementById(`w${w}_att_wgt`).textContent = `${attSum} / 55`;
+    document.getElementById(`w${w}_kv_sub`).textContent = `${kvSum} / ${kvMax}`;
+    document.getElementById(`w${w}_kv_wgt`).textContent = `${kvSum} / 35`;
+
+    weekData.push({ w, weekTotal, weekMax, attSum, kvSum });
+  }
+
+  // Gemiddelde stage (att + kv) over weken, uitgedrukt als % van max 90
+  const gemStageRaw = n > 0 ? totalAll / n : 0; // punten op 90
+  const stagePct = gemStageRaw / 90; // 0–1
+
+  // Elke component omzetten naar zijn gewogen bijdrage op 100
+  const stageAandeel  = stagePct * 70;          // 70% van totaal
+  const verslagAandeel = (verslag / 100) * 20;  // 20% van totaal
+  const dossierAandeel = (dossier / 100) * 10;  // 10% van totaal
+  const eindPct = stageAandeel + verslagAandeel + dossierAandeel; // op 100
+
+  const gemAtt = n > 0 ? weekData.reduce((a,d) => a+d.attSum, 0) / n : 0;
+  const gemKv  = n > 0 ? weekData.reduce((a,d) => a+d.kvSum,  0) / n : 0;
+
+  // render results
+  document.getElementById('resultsGrid').innerHTML = `
+    <div class="result-box">
+      <div class="rb-label">Gem. Attitudes <span style="font-size:0.6rem;opacity:.6;">(70%)</span></div>
+      <div class="rb-value">${gemAtt.toFixed(1)}</div>
+      <div class="rb-max">/ 55 pt (max 44)</div>
+    </div>
+    <div class="result-box">
+      <div class="rb-label">Gem. K&amp;V <span style="font-size:0.6rem;opacity:.6;">(70%)</span></div>
+      <div class="rb-value">${gemKv.toFixed(1)}</div>
+      <div class="rb-max">/ 35 pt (max 28)</div>
+    </div>
+    <div class="result-box">
+      <div class="rb-label">Verslag leerkracht <span style="font-size:0.6rem;opacity:.6;">(20%)</span></div>
+      <div class="rb-value">${verslagAandeel.toFixed(1)}</div>
+      <div class="rb-max">${verslag} / 100 → ${verslagAandeel.toFixed(1)} / 20</div>
+    </div>
+    <div class="result-box">
+      <div class="rb-label">Dossier leerkracht <span style="font-size:0.6rem;opacity:.6;">(10%)</span></div>
+      <div class="rb-value">${dossierAandeel.toFixed(1)}</div>
+      <div class="rb-max">${dossier} / 100 → ${dossierAandeel.toFixed(1)} / 10</div>
+    </div>
+    <div class="result-box totaal-box">
+      <div class="rb-label">Eindtotaal</div>
+      <div class="rb-value">${eindPct.toFixed(1)}%</div>
+      <div class="rb-max">Stage ${stageAandeel.toFixed(1)} + Verslag ${verslagAandeel.toFixed(1)} + Dossier ${dossierAandeel.toFixed(1)}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${Math.min(eindPct,100)}%"></div></div>
+    </div>
+  `;
+
+  // per week detail (zonder leerkracht)
+  document.getElementById('weekResultsDetail').innerHTML = `
+    <div style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:0.6rem;">Detail per week</div>
+    <div class="week-results-grid">
+      ${weekData.map(d => `
+        <div class="week-result-col">
+          <h4>Week ${d.w}</h4>
+          <div class="week-result-row"><span>Attitudes</span><span>${d.attSum} / 55</span></div>
+          <div class="week-result-row"><span>Kennis & Vaard.</span><span>${d.kvSum} / 35</span></div>
+          <div class="week-result-row" style="margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid rgba(255,255,255,0.1);font-weight:600;">
+            <span>Week subtotaal</span><span style="color:var(--gold)">${d.weekTotal} / ${d.weekMax}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function updateHeader() { /* cosmetic */ }
+
+function resetAll() {
+  if (!confirm('Alle gegevens wissen?')) return;
+  initState();
+  ['naam','klas','klasnr','bedrijf'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('aantalWeken').value = '3';
+  document.getElementById('verslag').value = '';
+  document.getElementById('dossier').value = '';
+  for (let w = 1; w <= 3; w++) {
+    ATTITUDES.forEach((_, i) => {
+      for (let s = 1; s <= 4; s++) document.getElementById(`w${w}_att_${i}_${s}`).classList.remove('active');
+      document.getElementById(`w${w}_att_${i}_val`).textContent = '—';
+    });
+    KENNIS.forEach((_, i) => {
+      for (let s = 1; s <= 4; s++) document.getElementById(`w${w}_kv_${i}_${s}`).classList.remove('active');
+      document.getElementById(`w${w}_kv_${i}_val`).textContent = '—';
+    });
+  }
+  updateWeeks();
+  updateCalc();
+}
+
+function exportJSON() {
+  const data = {
+    naam: document.getElementById('naam').value,
+    klas: document.getElementById('klas').value,
+    klasnr: document.getElementById('klasnr').value,
+    bedrijf: document.getElementById('bedrijf').value,
+    datum: document.getElementById('datum').value,
+    aantalWeken: document.getElementById('aantalWeken').value,
+    state: JSON.parse(JSON.stringify(state)),
+    verslag: document.getElementById('verslag').value,
+    dossier: document.getElementById('dossier').value
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `stage_${(data.naam || 'leerling').replace(/ /g,'_')}.json`;
+  a.click();
+}
+
+function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (d.naam) document.getElementById('naam').value = d.naam;
+      if (d.klas) document.getElementById('klas').value = d.klas;
+      if (d.klasnr) document.getElementById('klasnr').value = d.klasnr;
+      if (d.bedrijf) document.getElementById('bedrijf').value = d.bedrijf;
+      if (d.datum) document.getElementById('datum').value = d.datum;
+      if (d.aantalWeken) { document.getElementById('aantalWeken').value = d.aantalWeken; updateWeeks(); }
+      if (d.state) {
+        state = d.state;
+        for (let w = 1; w <= 3; w++) {
+          ATTITUDES.forEach((_, i) => {
+            for (let s = 1; s <= 4; s++) {
+              document.getElementById(`w${w}_att_${i}_${s}`).classList.toggle('active', state[w].att[i] === s);
+            }
+            document.getElementById(`w${w}_att_${i}_val`).textContent = state[w].att[i] || '—';
+          });
+          KENNIS.forEach((_, i) => {
+            for (let s = 1; s <= 4; s++) {
+              document.getElementById(`w${w}_kv_${i}_${s}`).classList.toggle('active', state[w].kv[i] === s);
+            }
+            document.getElementById(`w${w}_kv_${i}_val`).textContent = state[w].kv[i] || '—';
+          });
+        }
+      }
+      if (d.verslag) document.getElementById('verslag').value = d.verslag;
+      if (d.dossier) document.getElementById('dossier').value = d.dossier;
+      updateCalc();
+    } catch(err) { alert('Ongeldige JSON file.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+updateCalc();
+</script>
+</body>
+</html>
