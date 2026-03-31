@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dagelijks Stageverslag</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 14px; padding: 20px; max-width: 800px; margin: auto; color: #222; }
+  .school { text-align:center; font-size:13px; color:#555; margin-bottom:4px; }
+  h1 { text-align: center; margin-bottom: 20px; font-size: 20px; }
+  .section { margin-bottom: 20px; }
+  .section h2 { font-size: 14px; font-weight: bold; margin-bottom: 6px; border-bottom: 1px solid #999; padding-bottom: 3px; }
+  .field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  label.field-label { font-weight: bold; white-space: nowrap; }
+  input[type="text"], input[type="date"] {
+    flex: 1; border: none; border-bottom: 1px solid #555; outline: none;
+    font-family: Arial, sans-serif; font-size: 14px; padding: 2px 0; background: transparent;
+  }
+  input[type="date"] { flex: none; }
+  .lines-container { display: flex; flex-direction: column; gap: 6px; }
+  .line-row { display: flex; align-items: center; gap: 6px; }
+  .line-row input { flex: 1; }
+  .btn-add, .btn-remove {
+    background: none; border: 1px solid #555; border-radius: 3px;
+    cursor: pointer; font-size: 13px; padding: 1px 7px; line-height: 1.6;
+  }
+  .btn-remove { color: #999; }
+  .mc-options { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .mc-option { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+  .mc-option input[type="radio"] { margin-top: 2px; flex-shrink: 0; }
+  .photo-upload-label {
+    display: inline-block; margin-top: 4px; padding: 6px 14px;
+    border: 1px solid #555; border-radius: 3px; cursor: pointer; font-size: 13px;
+  }
+  #foto-input { display: none; }
+  .previews { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .preview-item { position: relative; }
+  .preview-item img { width: 130px; height: 100px; object-fit: cover; border: 1px solid #ccc; display: block; }
+  .remove-photo {
+    position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.55);
+    color: white; border: none; cursor: pointer; font-size: 11px; padding: 1px 5px; border-radius: 2px;
+  }
+  .actions { display: flex; gap: 10px; justify-content: center; margin-top: 24px; }
+  .btn-primary {
+    background: #1a5276; color: white; border: none; padding: 9px 22px;
+    border-radius: 4px; cursor: pointer; font-size: 14px;
+  }
+  .btn-secondary {
+    background: #fff; color: #1a5276; border: 1px solid #1a5276; padding: 9px 22px;
+    border-radius: 4px; cursor: pointer; font-size: 14px;
+  }
+  .print-tip {
+    text-align: center; font-size: 12px; color: #888; margin-top: 10px;
+  }
+
+  @media print {
+    @page { size: A4; margin: 15mm; }
+    .btn-add, .btn-remove, .actions, .remove-photo, .photo-upload-label { display: none !important; }
+    body { padding: 0; max-width: 100%; font-size: 12px; }
+    input[type="text"], input[type="date"] { border-bottom: 1px solid #555; font-size: 12px; }
+    .field-row { flex-wrap: wrap; }
+    .lines-container { width: 100%; }
+    .line-row input { word-break: break-word; white-space: normal; width: 100%; }
+    .section { page-break-inside: avoid; }
+    .previews { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .preview-item { width: 100%; }
+    .preview-item img { width: 100%; height: 200px; object-fit: cover; border: 1px solid #ccc; display: block; }
+  }
+</style>
+</head>
+<body>
+
+<div class="school">LMC Poperinge</div>
+<h1>Dagelijks Stageverslag</h1>
+
+<div class="section">
+  <h2>Algemene informatie</h2>
+  <div class="field-row">
+    <label class="field-label">Naam:</label>
+    <input type="text" id="naam" placeholder="Voor- en achternaam">
+  </div>
+  <div class="field-row">
+    <label class="field-label">Klas:</label>
+    <input type="text" id="klas" placeholder="bv. 6A">
+  </div>
+  <div class="field-row">
+    <label class="field-label">Datum:</label>
+    <input type="date" id="datum">
+  </div>
+</div>
+
+<div class="section">
+  <h2>Projecten</h2>
+  <div class="lines-container" id="projecten-lines">
+    <div class="line-row"><input type="text" placeholder="Project..."><button class="btn-remove" onclick="removeLine(this)">✕</button></div>
+  </div>
+  <button class="btn-add" onclick="addLine('projecten-lines','Project...')" style="margin-top:6px;">+ Voeg project toe</button>
+</div>
+
+<div class="section">
+  <h2>Uitgevoerde taken</h2>
+  <div class="lines-container" id="taken-lines">
+    <div class="line-row"><input type="text" placeholder="Taak..."><button class="btn-remove" onclick="removeLine(this)">✕</button></div>
+  </div>
+  <button class="btn-add" onclick="addLine('taken-lines','Taak...')" style="margin-top:6px;">+ Voeg taak toe</button>
+</div>
+
+<div class="section">
+  <h2>Wat heb ik bijgeleerd?</h2>
+  <div class="lines-container" id="geleerd-lines">
+    <div class="line-row"><input type="text" placeholder="Ik heb geleerd dat..."><button class="btn-remove" onclick="removeLine(this)">✕</button></div>
+  </div>
+  <button class="btn-add" onclick="addLine('geleerd-lines','Ik heb geleerd dat...')" style="margin-top:6px;">+ Voeg toe</button>
+</div>
+
+<div class="section">
+  <h2>Gebruikte gereedschappen</h2>
+  <div class="lines-container" id="gereedschap-lines">
+    <div class="line-row"><input type="text" placeholder="Gereedschap..."><button class="btn-remove" onclick="removeLine(this)">✕</button></div>
+  </div>
+  <button class="btn-add" onclick="addLine('gereedschap-lines','Gereedschap...')" style="margin-top:6px;">+ Voeg gereedschap toe</button>
+</div>
+
+<div class="section">
+  <h2>Zelfevaluatie</h2>
+  <p style="margin-bottom:8px;">Ik geef mijzelf het volgende resultaat voor vandaag:</p>
+  <div class="mc-options">
+    <label class="mc-option"><input type="radio" name="evaluatie" value="1"><span><strong>1</strong> — Begreep ik eigenlijk niet wat ik moest doen.</span></label>
+    <label class="mc-option"><input type="radio" name="evaluatie" value="2"><span><strong>2</strong> — Had ik nog veel hulp nodig om deze tot een goed einde te brengen.</span></label>
+    <label class="mc-option"><input type="radio" name="evaluatie" value="3"><span><strong>3</strong> — Moest ik bij sommige zaken hulp vragen.</span></label>
+    <label class="mc-option"><input type="radio" name="evaluatie" value="4"><span><strong>4</strong> — Moest ik geen uitleg of hulp meer vragen.</span></label>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Foto's van het werk</h2>
+  <p style="margin-bottom:6px; color:#555; font-size:13px;">Enkel toe te voegen indien de klant dit toelaat.</p>
+  <label class="photo-upload-label" for="foto-input">📷 Foto's toevoegen</label>
+  <input type="file" id="foto-input" accept="image/*" multiple>
+  <div class="previews" id="photo-previews"></div>
+</div>
+
+<div class="actions">
+  <button class="btn-secondary" onclick="resetForm()">Wissen</button>
+  <button class="btn-primary" onclick="printForm()">🖨️ Afdrukken / PDF</button>
+</div>
+
+<script>
+  document.getElementById('datum').valueAsDate = new Date();
+
+  document.getElementById('foto-input').addEventListener('change', function() {
+    const previews = document.getElementById('photo-previews');
+    Array.from(this.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        const btn = document.createElement('button');
+        btn.className = 'remove-photo';
+        btn.textContent = '✕';
+        btn.onclick = () => item.remove();
+        item.appendChild(img);
+        item.appendChild(btn);
+        previews.appendChild(item);
+      };
+      reader.readAsDataURL(file);
+    });
+    this.value = '';
+  });
+
+  function addLine(id, ph) {
+    const c = document.getElementById(id);
+    const row = document.createElement('div');
+    row.className = 'line-row';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.placeholder = ph;
+    const btn = document.createElement('button');
+    btn.className = 'btn-remove'; btn.textContent = '✕';
+    btn.onclick = () => removeLine(btn);
+    row.appendChild(inp); row.appendChild(btn);
+    c.appendChild(row);
+  }
+
+  function removeLine(btn) {
+    const c = btn.closest('.lines-container');
+    if (c.children.length > 1) btn.closest('.line-row').remove();
+  }
+
+  function printForm() {
+    const naam = document.getElementById('naam').value.trim() || 'Leerling';
+    const klas = document.getElementById('klas').value.trim() || 'Klas';
+    const datum = document.getElementById('datum').value || 'Datum';
+    document.title = `${naam} - ${klas} - ${datum}`;
+    window.print();
+    document.title = 'Dagelijks Stageverslag';
+  }
+
+  function resetForm() {
+    if (!confirm('Ben je zeker dat je het formulier wil wissen?')) return;
+    document.getElementById('naam').value = '';
+    document.getElementById('klas').value = '';
+    document.getElementById('datum').valueAsDate = new Date();
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    document.getElementById('photo-previews').innerHTML = '';
+    ['projecten-lines','taken-lines','geleerd-lines','gereedschap-lines'].forEach(id => {
+      const c = document.getElementById(id);
+      while (c.children.length > 1) c.lastChild.remove();
+      c.querySelector('input').value = '';
+    });
+  }
+</script>
+</body>
+</html>
